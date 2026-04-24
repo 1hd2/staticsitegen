@@ -34,5 +34,40 @@ class TestHtmlNode(unittest.TestCase):
         node = LeafNode("b", "")
         self.assertEqual(node.to_html(), '<b></b>')
 
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_with_multiple_children(self):
+        child_node1 = LeafNode("span", "child1")
+        child_node2 = LeafNode("b", "child2")
+        child_node3 = LeafNode(None, "child3")
+        parent_node = ParentNode("div", [child_node1, child_node2, child_node3])
+        self.assertEqual(parent_node.to_html(), "<div><span>child1</span><b>child2</b>child3</div>")
+
+    def test_to_html_with_multiple_grandchildren(self):
+        son_node = LeafNode("b", "son")
+        daughter_node = LeafNode("i", "daughter")
+        niece_node = LeafNode("i", "niece")
+        nephew_node = LeafNode("b", "nephew")
+        self_node = ParentNode("div", [son_node, daughter_node])
+        cousin_node = ParentNode("div", [nephew_node, niece_node])
+        parent_node = ParentNode("span", [self_node, cousin_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<span><div><b>son</b><i>daughter</i></div><div><b>nephew</b><i>niece</i></div></span>",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

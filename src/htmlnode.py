@@ -23,7 +23,6 @@ class LeafNode(HtmlNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
 
-
     def __repr__(self):
         return f"LeafNode(tag={self.tag}, value={self.value}, props={self.props})"
     
@@ -34,6 +33,23 @@ class LeafNode(HtmlNode):
             return f'{self.value}'
         else:
             return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
+
+class ParentNode(HtmlNode):
+    def __init__(self, tag, children, props=None):
+        super().__init__(tag, None, children, props)
+    """
+    def __repr__(self):
+        return f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
+    """
+    def to_html(self):
+        if self.tag == None:
+            raise ValueError("Missing Tag")
+        if self.children == None:
+            return ValueError("Missing Child")
+        children_html = ""
+        for child in self.children:
+            children_html += child.to_html()
+        return f'<{self.tag}>{children_html}</{self.tag}>'
 
 """ Deletable
         elif self.tag == "img":

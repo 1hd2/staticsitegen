@@ -19,4 +19,11 @@ def main():
     testimgnode = LeafNode("img", "This is an image", {"src": "image-file.jpg", "alt": "alternative text"})
     print(testimgnode.to_html())
 
+    testchildnode = LeafNode("span", "child")
+    testparentnode = ParentNode("div", [testchildnode])
+    print(testchildnode)
+    print(testchildnode.to_html())
+    print(testparentnode)
+    print(testparentnode.to_html())
+
 main()
