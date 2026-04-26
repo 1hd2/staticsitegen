@@ -37,10 +37,7 @@ class LeafNode(HtmlNode):
 class ParentNode(HtmlNode):
     def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
-    """
-    def __repr__(self):
-        return f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
-    """
+
     def to_html(self):
         if self.tag == None:
             raise ValueError("Missing Tag")
@@ -50,10 +47,3 @@ class ParentNode(HtmlNode):
         for child in self.children:
             children_html += child.to_html()
         return f'<{self.tag}>{children_html}</{self.tag}>'
-
-""" Deletable
-        elif self.tag == "img":
-            return f'<{self.tag}{self.props_to_html()} />'
-        else: 
-            return f'<{self.tag}>{self.value}</{self.tag}>'
-"""
