@@ -1,4 +1,6 @@
 from textnode import *
+from htmlnode import *
+from blockfunctions import *
 import re
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
@@ -74,3 +76,62 @@ def text_to_textnodes(text):
     nodes = split_nodes_link(nodes)
     nodes = split_nodes_image(nodes)
     return nodes
+
+def text_to_children(text):
+    nodes = text_to_textnodes(text)
+    html_nodes = []
+    for node in nodes:
+        html_nodes.append(text_node_to_html_node(node))
+    return html_nodes
+
+def markdown_to_html_node(markdown):
+    clean_blocks = markdown_to_blocks(markdown)
+    html_nodes = []
+
+    for block in clean_blocks:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.PARAGRAPH:
+            clean = " ".join(block.split("\n"))
+            parent = ParentNode('p', text_to_children(clean))
+            html_nodes.append(parent)
+        elif block_type == BlockType.HEADER:
+            header_size = 0
+            for c in block[:7]:
+                if c == '#':
+                    header_size += 1
+                else:
+                    break
+            parent = ParentNode(f"h{header_size}", text_to_children(block[header_size + 1:]))
+            html_nodes.append(parent)
+        elif block_type == BlockType.QUOTE:
+            block_text = block.splitlines()
+            clean_lines = []
+            for text in block_text:
+                clean_lines.append(text[1:].lstrip())
+            clean_text = " ".join(clean_lines)
+            parent = ParentNode("blockquote", text_to_children(clean_text))
+            html_nodes.append(parent)
+        elif block_type == BlockType.UNORDERED_LIST:
+            block_text = block.splitlines()
+            list_lines = []
+            for line in block_text:
+                clean_text = line.split('- ', 1)[1]
+                list_lines.append(ParentNode("li", text_to_children(clean_text)))
+            parent = ParentNode("ul", list_lines)
+            html_nodes.append(parent)
+        elif block_type == BlockType.ORDERED_LIST:
+            block_text = block.splitlines()
+            list_lines = []
+            for line in block_text:
+                clean_text = line.split('. ', 1)[1]
+                list_lines.append(ParentNode("li", text_to_children(clean_text)))
+            parent = ParentNode("ol", list_lines)
+            html_nodes.append(parent)
+        elif block_type == BlockType.CODE:
+            code_text = block[4:-3]
+            code_text_node = TextNode(code_text, TextType.CODE)
+            code_node = text_node_to_html_node(code_text_node)
+            parent = ParentNode("pre", [code_node])
+            html_nodes.append(parent)
+
+    return ParentNode("div", html_nodes)
