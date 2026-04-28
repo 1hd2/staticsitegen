@@ -333,3 +333,27 @@ the **same** even with inline stuff
         html,
         '<div><p>Check <a href="example.com">this</a> and <img src="image.png" alt="pic"></img></p></div>'
         )
+
+    def test_head_bold(self):
+        md = "### This is **bold**"
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html, '<div><h3>This is <b>bold</b></h3></div>'
+        )
+
+    def test_single_quote(self):
+        md = ">single **bold** quote"
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html, '<div><blockquote>single <b>bold</b> quote</blockquote></div>'
+        )
+
+    def test_ordered_list(self):
+        md = "1. one\n2. two\n3. three\n4. four\n5. five\n6. six\n7. seven\n8. eight\n9. nine\n10. **ten**\n11. _eleven_"
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html, '<div><ol><li>one</li><li>two</li><li>three</li><li>four</li><li>five</li><li>six</li><li>seven</li><li>eight</li><li>nine</li><li><b>ten</b></li><li><i>eleven</i></li></ol></div>'
+        )

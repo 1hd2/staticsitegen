@@ -36,7 +36,8 @@ def block_to_block_type(markdown):
             return BlockType.UNORDERED_LIST
         
     for l in range(len(markdown_lines)):
-        if markdown_lines[l][:3] != f"{l+1}. ":
+        marker = markdown_lines[l].split('. ')[0]
+        if marker != f'{l+1}':
             break
         if l == len(markdown_lines) - 1:
             return BlockType.ORDERED_LIST
